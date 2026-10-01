@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>고졸·마이스터고 채용 모아보기 | 공기업·대기업 공채 + 가점 자격증</title>
+  <meta name="description" content="고졸·마이스터고 대상 공기업/대기업 채용공고를 한 번에 보고, 공기업별 가점 자격증(기능사·산업기사) 리스트를 확인하세요." />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="brand">
+        <span class="brand-mark">합</span>
+        <div>
+          <h1>고졸·마이스터고 채용 모아보기</h1>
+          <p class="tagline">공기업·대기업 공채 + 가점 자격증 한눈에</p>
+        </div>
+      </div>
+      <nav class="tabs" id="tabs">
+        <button class="tab" data-tab="jobs">채용 공고</button>
+        <button class="tab" data-tab="certs">자격증 가점표</button>
+        <button class="tab" data-tab="recommend">기업 추천</button>
+        <button class="tab active" data-tab="map">기업 지도</button>
+        <button class="tab" data-tab="guide">이용 안내</button>
+        <button class="tab" data-tab="community">커뮤니티</button>
+        <button class="tab" data-tab="member" id="tab-member">회원가입</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- ============ 채용 공고 ============ -->
+    <section id="panel-jobs" class="panel">
+      <div class="toolbar">
+        <input type="search" id="q" class="input grow" placeholder="회사명·공고명 검색 (예: 한전, 코레일, 기능사)" />
+        <select id="f-type" class="input">
+          <option value="all">구분: 전체</option>
+          <option value="공기업">공기업</option>
+          <option value="대기업">대기업</option>
+        </select>
+        <select id="f-field" class="input">
+          <option value="all">직무: 전체</option>
+        </select>
+        <select id="f-career" class="input">
+          <option value="all">경력: 전체</option>
+          <option value="fresh">신입/경력무관</option>
+          <option value="career">경력</option>
+        </select>
+        <select id="f-region" class="input">
+          <option value="all">지역: 전체</option>
+        </select>
+        <select id="f-sort" class="input">
+          <option value="deadline">마감임박 순</option>
+          <option value="registered">최근 등록 순</option>
+          <option value="company">회사명 순</option>
+        </select>
+      </div>
+      <div class="toolbar sub">
+        <label class="check"><input type="checkbox" id="f-open" checked /> 마감된 공고 숨기기</label>
+        <label class="check"><input type="checkbox" id="f-meister" /> 마이스터고·고졸 전형만</label>
+        <span id="jobs-count" class="muted"></span>
+        <span id="jobs-updated" class="muted right"></span>
+      </div>
+      <div id="jobs-list" class="job-list"></div>
+      <div class="more-wrap">
+        <button id="more" class="btn">더보기</button>
+      </div>
+      <p class="muted small disclaimer">
+        공고 데이터는 사람인 검색 결과를 자동 수집한 것으로, 원문과 다를 수 있습니다.
+        지원 전 반드시 각 공고 원문을 확인하세요.
+      </p>
+    </section>
+
+    <!-- ============ 자격증 가점표 ============ -->
+    <section id="panel-certs" class="panel">
+      <div class="notice">
+        <strong>가점 수치는 예시입니다.</strong>
+        같은 회사라도 공고마다 배점과 인정 자격이 다릅니다. 반드시 해당 채용공고의
+        '가산점/우대사항' 원문을 확인하고, 관련 계열 자격은 보통 최고 등급 1개만 인정됩니다.
+      </div>
+      <div id="level-guide" class="level-guide"></div>
+      <div class="toolbar">
+        <input type="search" id="cq" class="input grow" placeholder="회사명 또는 자격증명 검색 (예: 전기기능사, 코레일)" />
+        <select id="cf-type" class="input">
+          <option value="all">구분: 전체</option>
+          <option value="공기업">공기업</option>
+          <option value="대기업">대기업</option>
+        </select>
+        <select id="cf-level" class="input">
+          <option value="all">등급: 전체</option>
+          <option value="기능사">기능사</option>
+          <option value="산업기사">산업기사</option>
+          <option value="기사">기사</option>
+          <option value="기타">기타</option>
+        </select>
+      </div>
+      <div id="certs-list" class="cert-list"></div>
+    </section>
+
+    <!-- ============ 자격증 기반 기업 추천 ============ -->
+    <section id="panel-recommend" class="panel">
+      <div class="recommend-intro">
+        <h2>내 자격증으로 기업 찾기</h2>
+        <p>보유한 자격증을 추가하면 해당 자격증을 우대·가점으로 반영하는 기업을 추천해요.</p>
+      </div>
+      <div class="recommend-search">
+        <label for="owned-cert-input">보유 자격증</label>
+        <div class="toolbar">
+          <input type="search" id="owned-cert-input" class="input grow" list="owned-cert-options" placeholder="예: 전기기능사" autocomplete="off" />
+          <datalist id="owned-cert-options"></datalist>
+          <button type="button" id="add-owned-cert" class="btn btn-primary">자격증 추가</button>
+        </div>
+        <p id="owned-cert-message" class="muted small" aria-live="polite">자격증 목록에서 선택하거나 이름을 입력하세요.</p>
+        <div id="owned-cert-list" class="owned-cert-list" aria-label="내가 보유한 자격증"></div>
+      </div>
+      <div class="recommend-results-head">
+        <h3>추천 기업</h3>
+        <select id="recommend-type" class="input" aria-label="기업 구분">
+          <option value="all">구분: 전체</option>
+          <option value="공기업">공기업</option>
+          <option value="대기업">사기업(대기업)</option>
+        </select>
+      </div>
+      <p id="recommend-count" class="muted small" aria-live="polite"></p>
+      <div id="recommend-list" class="recommend-list"></div>
+      <p class="muted small disclaimer">추천 결과는 자격증 가점표 데이터에 등록된 정보 기준입니다. 실제 인정 자격증과 가점은 채용 공고 원문에서 확인하세요.</p>
+    </section>
+
+    <!-- ============ 기업 위치 지도 ============ -->
+    <section id="panel-map" class="panel active">
+      <div class="map-intro">
+        <div>
+          <h2>공기업·대기업 위치</h2>
+          <p>빨간 점을 누르면 해당 기업과 본사 소재 지역을 볼 수 있어요.</p>
+        </div>
+        <select id="company-map-type" class="input" aria-label="기업 유형 필터">
+          <option value="all">구분: 전체</option>
+          <option value="공기업">공기업</option>
+          <option value="대기업">대기업</option>
+        </select>
+      </div>
+      <div class="map-legend"><span class="map-legend-dot"></span> 기업 본사 소재 지역</div>
+      <div class="company-map-layout">
+        <div class="korea-map-wrap">
+          <svg id="company-map" class="korea-map" viewBox="0 0 660 740" role="img" aria-labelledby="map-title map-desc">
+            <title id="map-title">대한민국 기업 위치 지도</title>
+            <desc id="map-desc">공기업과 대기업의 본사 소재 지역을 빨간 점으로 표시한 지도입니다.</desc>
+            <defs>
+              <pattern id="map-dots" width="22" height="22" patternUnits="userSpaceOnUse">
+                <circle cx="1" cy="1" r="1" fill="#d9e3f2"></circle>
+              </pattern>
+            </defs>
+            <rect class="map-water" x="0" y="0" width="660" height="740" rx="18"></rect>
+            <rect x="0" y="0" width="660" height="740" rx="18" fill="url(#map-dots)"></rect>
+            <path id="korea-land" class="korea-land"></path>
+            <path id="jeju-island" class="korea-land island"></path>
+            <g id="company-map-points"></g>
+          </svg>
+          <p class="map-footnote">지도 점은 본사 소재 시·군의 대표 위치를 나타냅니다.</p>
+        </div>
+        <aside class="map-side">
+          <div id="map-company-detail" class="map-company-detail" aria-live="polite"></div>
+          <h3>표시 기업 <span id="map-company-count" class="muted"></span></h3>
+          <div id="map-company-list" class="map-company-list"></div>
+        </aside>
+      </div>
+      <p class="muted small disclaimer">표시 위치는 본사 소재 지역 기준의 참고용입니다. 세부 주소는 각 기업의 공식 홈페이지에서 확인하세요.</p>
+    </section>
+
+    <!-- ============ 이용 안내 ============ -->
+    <section id="panel-guide" class="panel">
+      <article class="guide">
+        <h2>데이터 갱신 방법</h2>
+        <p>이 사이트는 정적 페이지입니다. 공고 데이터를 새로 받으려면 터미널에서:</p>
+        <pre><code>python scraper\run.py</code></pre>
+        <p>명령을 실행하면 사람인에서 주요 공기업·대기업·고졸 관련 공고를 다시 수집해
+          <code>data/jobs.js</code>를 갱신합니다. 브라우저에서 새로고침하면 됩니다.</p>
+
+        <h2>마이스터고 전형 참고</h2>
+        <ul>
+          <li>삼성·현대차 등의 <b>마이스터고 대학 진학 전형</b>은 별도(졸업 예정자 대상). 취업 전형은 각 기업 채용 홈페이지 확인.</li>
+          <li>공기업 고졸 공채는 상시 채용(기간제·대체인력)과 정기 공채(채용연계형)로 나뉩니다. 정기 공채는 인적성+면접 중심.</li>
+          <li>가점 자격증은 <b>동일 계열 중 최고 등급 1개</b>만 인정되는 경우가 많아, 기능사→산업기사 상위 등급 취득이 유리합니다.</li>
+        </ul>
+
+        <h2>함께 보면 좋은 사이트</h2>
+        <ul class="links">
+          <li><a href="https://www.q-net.or.kr" target="_blank" rel="noopener">Q-net (한국산업인력공단)</a> — 국가기술자격 응시·접수</li>
+          <li><a href="https://www.meister.go.kr" target="_blank" rel="noopener">마이스터고 포털</a></li>
+          <li><a href="https://www.work.go.kr" target="_blank" rel="noopener">워크넷</a> — 전체 채용정보</li>
+          <li><a href="https://www.saramin.co.kr" target="_blank" rel="noopener">사람인</a> — 공고 데이터 출처</li>
+        </ul>
+
+        <h2>면책</h2>
+        <p class="muted small">
+          본 사이트는 취업 정보를 편리하게 모아보기 위한 개인용 도구입니다. 채용 정보와 자격증 가점은
+          참고용이며 정확성을 보장하지 않습니다. 모든 전형 조건은 각 기업의 공고 원문이 기준입니다.
+        </p>
+      </article>
+    </section>
+    <!-- ============ 회원가입 / 내 정보 ============ -->
+    <section id="panel-member" class="panel">
+      <div id="auth-box" class="auth-grid">
+        <div class="auth-card">
+          <h2>회원가입</h2>
+          <p class="muted small">마이스터고 학교 정보를 등록하고 채용 정보를 내 조건에 맞게 관리하세요.</p>
+          <form id="signup-form" class="form-grid">
+            <div class="field">
+              <label for="su-name">이름 (별명)</label>
+              <input id="su-name" class="input" type="text" required maxlength="20" placeholder="예: 김마이스터" />
+            </div>
+            <div class="field">
+              <label for="su-email">이메일</label>
+              <input id="su-email" class="input" type="email" required placeholder="example@mail.com" />
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="su-pw">비밀번호</label>
+                <input id="su-pw" class="input" type="password" required minlength="6" placeholder="6자 이상" />
+              </div>
+              <div class="field">
+                <label for="su-pw2">비밀번호 확인</label>
+                <input id="su-pw2" class="input" type="password" required minlength="6" placeholder="6자 이상" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="su-school">마이스터고 학교명</label>
+              <input id="su-school" class="input" type="text" required maxlength="40" placeholder="예: 부산소프트웨어마이스터고" />
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="su-cohort">몇 기</label>
+                <input id="su-cohort" class="input" type="number" required min="1" placeholder="예: 3" />
+              </div>
+              <div class="field">
+                <label for="su-grade">학년</label>
+                <select id="su-grade" class="input" required>
+                  <option value="">선택</option>
+                  <option value="1">1학년</option>
+                  <option value="2">2학년</option>
+                  <option value="3">3학년</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="su-dept">과 (전공)</label>
+              <input id="su-dept" class="input" type="text" required maxlength="40" placeholder="예: 소프트웨어과" />
+            </div>
+            <button type="submit" class="btn btn-primary">가입하기</button>
+          </form>
+        </div>
+
+        <div class="auth-card">
+          <h2>기존 회원 로그인</h2>
+          <p class="muted small">가입 시 사용한 이메일과 비밀번호로 로그인하세요.</p>
+          <form id="login-form" class="form-grid">
+            <div class="field">
+              <label for="li-email">이메일</label>
+              <input id="li-email" class="input" type="email" required placeholder="example@mail.com" />
+            </div>
+            <div class="field">
+              <label for="li-pw">비밀번호</label>
+              <input id="li-pw" class="input" type="password" required />
+            </div>
+            <button type="submit" class="btn btn-primary">로그인</button>
+          </form>
+        </div>
+      </div>
+
+      <div id="profile-box" class="auth-card profile-card" hidden>
+        <h2>내 정보</h2>
+        <ul id="profile-list" class="profile-list"></ul>
+        <button id="logout-btn" class="btn">로그아웃</button>
+      </div>
+
+      <p id="auth-msg" class="auth-msg" hidden></p>
+    </section>
+    <!-- ============ 커뮤니티 ============ -->
+    <section id="panel-community" class="panel">
+      <div id="community-list-wrap">
+        <div class="toolbar">
+          <button id="community-refresh" class="btn">새로고침</button>
+          <button id="community-write-btn" class="btn btn-primary write-btn">글쓰기</button>
+        </div>
+        <div id="community-list" class="post-list"></div>
+        <div class="more-wrap"><button id="community-more" class="btn">더보기</button></div>
+        <p class="muted small disclaimer">
+          글쓰기는 누구나 가능하며(학교 정보 필수), 로그인한 회원이 쓴 글은 본인이 삭제할 수 있습니다. 댓글은 회원만 작성할 수 있습니다.
+        </p>
+      </div>
+
+      <div id="community-detail" class="auth-card post-detail" hidden>
+        <button id="cd-back" class="btn back-btn">← 목록</button>
+        <h2 id="cd-title" class="post-detail-title"></h2>
+        <p id="cd-meta" class="muted small"></p>
+        <div id="cd-content" class="post-content"></div>
+        <div class="post-actions">
+          <button id="cd-delete" class="btn danger" hidden>삭제</button>
+        </div>
+
+        <div class="comment-section">
+          <h3>댓글 <span id="cm-count" class="muted"></span></h3>
+          <div id="comment-list" class="comment-list"></div>
+          <form id="comment-form" class="form-grid" hidden>
+            <div class="field">
+              <textarea id="cm-content" class="input" rows="3" required maxlength="1000" placeholder="댓글을 입력하세요"></textarea>
+            </div>
+            <div class="post-actions">
+              <button type="submit" class="btn btn-primary cm-btn">댓글 등록</button>
+            </div>
+          </form>
+          <p id="comment-login-hint" class="muted small" hidden>
+            댓글 쓰기는 로그인한 회원만 가능합니다. '회원가입' 탭에서 가입/로그인해 주세요.
+          </p>
+        </div>
+      </div>
+
+      <div id="community-write" class="auth-card" hidden>
+        <h2>글쓰기</h2>
+        <form id="cw-form" class="form-grid">
+          <div class="field">
+            <label for="cw-title">제목</label>
+            <input id="cw-title" class="input" type="text" required maxlength="100" placeholder="제목을 입력하세요" />
+          </div>
+          <div class="field">
+            <label for="cw-content">내용</label>
+            <textarea id="cw-content" class="input" rows="10" required maxlength="5000" placeholder="내용을 입력하세요"></textarea>
+          </div>
+          <div class="field">
+            <label for="cw-school">마이스터고 학교명</label>
+            <input id="cw-school" class="input" type="text" required maxlength="40" placeholder="예: 부산소프트웨어마이스터고" />
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="cw-cohort">몇 기</label>
+              <input id="cw-cohort" class="input" type="number" required min="1" placeholder="예: 3" />
+            </div>
+            <div class="field">
+              <label for="cw-grade">학년</label>
+              <select id="cw-grade" class="input" required>
+                <option value="">선택</option>
+                <option value="1">1학년</option>
+                <option value="2">2학년</option>
+                <option value="3">3학년</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="cw-dept">과 (전공)</label>
+            <input id="cw-dept" class="input" type="text" required maxlength="40" placeholder="예: 소프트웨어과" />
+          </div>
+          <div class="form-row">
+            <button type="submit" class="btn btn-primary">등록</button>
+            <button type="button" id="cw-cancel" class="btn">취소</button>
+          </div>
+        </form>
+      </div>
+
+      <p id="community-msg" class="auth-msg" hidden></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span class="muted small">고졸·마이스터고 채용 모아보기 — 데이터 출처: 사람인 / 자격증 가점표: 공고 기준 참고용</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-config.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/community.js"></script>
+  <script src="data/jobs.js"></script>
+  <script src="data/fields.js"></script>
+  <script src="data/certs.js"></script>
+  <script src="data/company-locations.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
